@@ -1,0 +1,36 @@
+# Keil build output
+Objects/
+Listings/
+
+# Keil per-user workspace and UI state
+*.uvguix
+*.uvguix.*
+*.uvgui
+*.uvgui.*
+
+# Keil backups
+*.uvprojx.bak
+*.uvoptx.bak
+*.bak
+
+# Generated build metadata
+*.cbuild-gen.yml
+*cbuild-gen-idx.yml
+
+# Common embedded build artifacts
+*.o
+*.d
+*.axf
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.lnp
+*.dep
+
+# OS/editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
