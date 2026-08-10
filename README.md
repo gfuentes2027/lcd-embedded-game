@@ -17,6 +17,8 @@ https://youtu.be/L1NryUr7NEQ
 |Target| STM32F401RETx, Cortex-M4|
 Clock| Default 16 MHz HSI|
 
+![STM32 LCD game wiring schematic](C:\Users\gfuen\Downloads\349_project_hardware\349_project_hardware.svg)
+
 # How The Game Works
 1. Check whether the player and an active obstacle collide at column 15.
 2. Decrement the top and bottom obstacle spawn timers.
