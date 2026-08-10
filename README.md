@@ -2,8 +2,7 @@
 
  This is an embedded obstacle dodging game for the STM32F401RE Arm Cortex-M4 microcontroller. The goal of the game is for the player to last as long as possible while dodging objects that are flying towards them. The player moves between the top and bottom rows of the LCD by pressing a pushbutton as the obstacles move in a random order from left to right. 
 
-View Project Demo here:
-https://youtu.be/L1NryUr7NEQ
+[![Watch the STM32 game demo](https://img.youtube.com/vi/L1NryUr7NEQ/hqdefault.jpg)](https://youtu.be/L1NryUr7NEQ)
 
  # Hardware
 
