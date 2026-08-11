@@ -20,6 +20,67 @@ Clock| Default 16 MHz HSI|
 
 ![STM32 LCD game wiring schematic](349_project_hardware.svg)
 
+# Software Architecture
+
+```mermaid
+flowchart TB
+    CUBE["STM32CubeMX / CMSIS<br/>startup and device support"]
+    RESET["Reset Handler"]
+
+    subgraph APP["Application — 349_project_code.s"]
+        MAIN["__main<br/>Application entry"]
+        INIT["System Initialization<br/>LCD • GPIO • custom characters • game state"]
+        LOOP["Main Game Loop"]
+
+        COLLISION["Collision Detection"]
+        OBSTACLES["Obstacle Manager<br/>spawn • animate • move"]
+        INPUT["Button Handler<br/>edge detection • debounce"]
+        PLAYER["Player Manager<br/>toggle row • redraw"]
+        SCORE["Score Manager"]
+        GAMEOVER["Game-Over State<br/>display score • stop gameplay"]
+
+        STATE[("Game State<br/>score • random seed • delays<br/>active flags • positions • frames")]
+    end
+
+    subgraph SERVICES["Drivers and Utilities"]
+        RNG["Random Generator<br/>linear congruential generator"]
+        LCDDRIVER["LCD Driver<br/>LCDInit • LCDCommand • LCDData"]
+        DELAY["Busy-Wait Timing"]
+        GPIO["Memory-Mapped GPIO Access"]
+    end
+
+    subgraph HARDWARE["Hardware"]
+        BUTTON["Active-Low Pushbutton<br/>PA0"]
+        LCD["16×2 Character LCD<br/>PA5–PA7 and PC0–PC7"]
+        MCU["STM32F401RE<br/>Arm Cortex-M4"]
+    end
+
+    CUBE --> RESET --> MAIN --> INIT --> LOOP
+
+    LOOP --> COLLISION
+    COLLISION -->|No collision| OBSTACLES
+    COLLISION -->|Collision| GAMEOVER
+    OBSTACLES --> INPUT --> PLAYER --> SCORE --> DELAY --> LOOP
+
+    COLLISION <--> STATE
+    OBSTACLES <--> STATE
+    INPUT <--> STATE
+    PLAYER <--> STATE
+    SCORE <--> STATE
+
+    OBSTACLES --> RNG
+    INIT --> LCDDRIVER
+    OBSTACLES --> LCDDRIVER
+    PLAYER --> LCDDRIVER
+    GAMEOVER --> LCDDRIVER
+
+    BUTTON --> GPIO
+    INPUT --> GPIO
+    LCDDRIVER --> GPIO
+    GPIO --> MCU
+    GPIO --> LCD
+```
+
 # How The Game Works
 1. Check whether the player and an active obstacle collide at column 15.
 2. Decrement the top and bottom obstacle spawn timers.
