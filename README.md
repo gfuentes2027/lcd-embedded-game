@@ -136,3 +136,52 @@ button state, and player position during gameplay.
 
 For a complete CPU and peripheral register map, see the [registers table](docs/register_map.md).
 
+# Build and Flash Instructions
+
+## Hardware Setup
+**Materials**
+  - STM32F401RE development board
+  - ST-Link programmer/debugger
+  - HD44780-compatible 16x2 LCD
+  - Active-low pushbutton with a 10 kΩ pull-up resistor
+  - Keil MDK-ARM / µVision 5
+  - ARM CMSIS 6.1.0 pack
+  - Keil STM32F4xx Device Family Pack 3.0.0
+  - USB cable capable of data transfer
+
+ Connect the LCD and push button according to the wiring schematic seen in the hardware section
+
+ Before Applying power:
+  - Connect the STM32 and LCD grounds together.
+  - Verify the LCD supply voltage against its datasheet.
+  - Set the LCD contrast using the 10 kΩ potentiometer.
+  - Connect the PA0 pushbutton with an external pull-up resistor.
+
+## Build Instructions
+1. Clone repository
+```powershell
+git clone https://github.com/gfuentes2027/349-project.git
+cd 349-project
+```
+2. Open 349_project.uvprojx in Keil µVision.
+3. If prompted, use the Keil Pack Installer to install the required CMSIS
+    and STM32F4 device packs.
+
+4. Select the Target_1 build target.
+5. Build the project using Project → Build Target or press F7.
+6. Confirm that the build completes without errors.
+
+The build produces Objects/349_project.axf
+
+The Objects/ directory is generated locally and excluded from Git.
+
+## Flash Instructions
+
+1. Connect the STM32 board to the computer through ST-Link.
+2. In Keil, open Options for Target → Debug.
+3. Confirm that ST-Link Debugger is selected.
+4. Select Flash → Download or press F8.
+5. Reset the board or select Debug → Run.
+
+**Note**
+STM32CubeMX is not needed to merely build the repository since the generated support files are already included.
