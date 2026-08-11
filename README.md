@@ -18,7 +18,7 @@
 |Target| STM32F401RETx, Cortex-M4|
 Clock| Default 16 MHz HSI|
 
-![STM32 LCD game wiring schematic](349_project_hardware.svg)
+![STM32 LCD game wiring schematic](docs/349_project_hardware.svg)
 
 # Software Architecture
 
@@ -123,4 +123,16 @@ Clock| Default 16 MHz HSI|
 8. Wait using a busy-loop delay and repeat.
 
 When a collision occurs, the program clears the LCD and prints "GAME OVER!" along with a three-character score.
+
+# Register-Level Design
+The game uses direct memory-mapped register access rather than high-level GPIO functions:
+
+- `RCC_AHB1ENR` enables the GPIOA and GPIOC peripheral clocks.
+- `GPIOA_MODER`, `GPIOA_IDR`, and `GPIOA_ODR` configure and control the
+pushbutton and LCD control signals.
+- `GPIOC_MODER` and `GPIOC_ODR` drive the LCD's 8-bit data bus.
+- ARM registers R4-R12 retain obstacle positions, animation frames,
+button state, and player position during gameplay.
+
+For a complete CPU and peripheral register map, see the [registers table](docs/register_map.md).
 
