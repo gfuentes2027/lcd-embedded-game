@@ -22,64 +22,95 @@ Clock| Default 16 MHz HSI|
 
 # Software Architecture
 
-```mermaid
-flowchart TB
-    CUBE["STM32CubeMX / CMSIS<br/>startup and device support"]
-    RESET["Reset Handler"]
+  ```mermaid
+  ---
+  config:
+    htmlLabels: false
+    flowchart:
+      wrappingWidth: 180
+      padding: 15
+  ---
+  flowchart TB
+      CUBE["`STM32CubeMX / CMSIS
+      Startup and device support`"]
 
-    subgraph APP["Application — 349_project_code.s"]
-        MAIN["__main<br/>Application entry"]
-        INIT["System Initialization<br/>LCD • GPIO • custom characters • game state"]
-        LOOP["Main Game Loop"]
+      RESET["Reset Handler"]
 
-        COLLISION["Collision Detection"]
-        OBSTACLES["Obstacle Manager<br/>spawn • animate • move"]
-        INPUT["Button Handler<br/>edge detection • debounce"]
-        PLAYER["Player Manager<br/>toggle row • redraw"]
-        SCORE["Score Manager"]
-        GAMEOVER["Game-Over State<br/>display score • stop gameplay"]
+      subgraph APP["Application - 349_project_code.s"]
+          MAIN["`Assembly entry point
+          __main`"]
 
-        STATE[("Game State<br/>score • random seed • delays<br/>active flags • positions • frames")]
-    end
+          INIT["`System Initialization
+          LCD, GPIO, RNG, and game state`"]
 
-    subgraph SERVICES["Drivers and Utilities"]
-        RNG["Random Generator<br/>linear congruential generator"]
-        LCDDRIVER["LCD Driver<br/>LCDInit • LCDCommand • LCDData"]
-        DELAY["Busy-Wait Timing"]
-        GPIO["Memory-Mapped GPIO Access"]
-    end
+          LOOP["Main Game Loop"]
+          COLLISION["Collision Detection"]
 
-    subgraph HARDWARE["Hardware"]
-        BUTTON["Active-Low Pushbutton<br/>PA0"]
-        LCD["16×2 Character LCD<br/>PA5–PA7 and PC0–PC7"]
-        MCU["STM32F401RE<br/>Arm Cortex-M4"]
-    end
+          OBSTACLES["`Obstacle Manager
+          Spawn, animate, and move`"]
 
-    CUBE --> RESET --> MAIN --> INIT --> LOOP
+          INPUT["`Button Handler
+          Edge detection and debounce`"]
 
-    LOOP --> COLLISION
-    COLLISION -->|No collision| OBSTACLES
-    COLLISION -->|Collision| GAMEOVER
-    OBSTACLES --> INPUT --> PLAYER --> SCORE --> DELAY --> LOOP
+          PLAYER["`Player Manager
+          Toggle row and redraw`"]
 
-    COLLISION <--> STATE
-    OBSTACLES <--> STATE
-    INPUT <--> STATE
-    PLAYER <--> STATE
-    SCORE <--> STATE
+          GAMEOVER["`Game-Over State
+          Display score and stop gameplay`"]
 
-    OBSTACLES --> RNG
-    INIT --> LCDDRIVER
-    OBSTACLES --> LCDDRIVER
-    PLAYER --> LCDDRIVER
-    GAMEOVER --> LCDDRIVER
+          STATE[("`Game State
+          Score, seed, delays, flags,
+          positions, and animation frames`")]
+      end
 
-    BUTTON --> GPIO
-    INPUT --> GPIO
-    LCDDRIVER --> GPIO
-    GPIO --> MCU
-    GPIO --> LCD
-```
+      subgraph SERVICES["Drivers and Utilities"]
+          RNG["`Random Generator
+          Linear congruential generator`"]
+
+          LCDDRIVER["`LCD Driver
+          Init, command, and data`"]
+
+          DELAY["Busy-Wait Timing"]
+          GPIO["Memory-Mapped GPIO"]
+      end
+
+      subgraph HARDWARE["Hardware"]
+          BUTTON["`Active-Low Pushbutton
+          PA0`"]
+
+          LCD["`16x2 Character LCD
+          PA5-PA7 and PC0-PC7`"]
+
+          MCU["`STM32F401RE
+          Arm Cortex-M4`"]
+      end
+
+      CUBE --> RESET --> MAIN --> INIT --> LOOP
+
+      LOOP --> COLLISION
+      COLLISION -->|No collision| OBSTACLES
+      COLLISION -->|Collision| GAMEOVER
+      OBSTACLES --> INPUT --> PLAYER --> SCORE --> DELAY --> LOOP
+
+      COLLISION <--> STATE
+      OBSTACLES <--> STATE
+      INPUT <--> STATE
+      PLAYER <--> STATE
+      SCORE <--> STATE
+
+      OBSTACLES --> RNG
+
+      INIT --> LCDDRIVER
+      OBSTACLES --> LCDDRIVER
+      PLAYER --> LCDDRIVER
+      GAMEOVER --> LCDDRIVER
+
+      BUTTON --> GPIO
+      INPUT --> GPIO
+      LCDDRIVER --> GPIO
+      GPIO --> MCU
+      GPIO --> LCD
+  ```
 
 # How The Game Works
 1. Check whether the player and an active obstacle collide at column 15.
